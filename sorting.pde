@@ -42,7 +42,7 @@ PFont f;
 
 int index = 1;
 
-int thisimage = 1;
+String pricturename = "input_1";
 
 void settings() {
   // Window size
@@ -51,7 +51,7 @@ void settings() {
 
 void setup() {
   // Input image
-  input = loadImage("input" + thisimage + ".jpg");
+  input = loadImage("" + picturename + ".jpg");
 
   // Create an empty image with the same size an input image
   output = createImage(input.width, input.height, RGB);
@@ -75,10 +75,6 @@ void draw() {
   averageColor();  // Caltulate average color
 
   drawText();  // Draw text on the render
-
-  saveFrame("./lol/processed_circular_" + thisimage + ".jpg");
-  thisimage++;
-  setup();
 
   // No loop, since it is useless
   //noLoop();
