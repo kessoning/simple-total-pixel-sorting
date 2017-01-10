@@ -1,5 +1,5 @@
 /*
- 
+
  ** SIMPLE TOTAL PIXEL SORTING
  **
  ** Inspired by Pixel Sorting by Kim Asendorf
@@ -13,7 +13,7 @@
  **
  ** Please have fun modifying it and share any improvements, as the open source philosphy teaches to all of us.
  **
- 
+
  */
 
 // Sorting mode
@@ -21,8 +21,9 @@
 // 1: polar
 // 2: random
 // 3: Noise
-int mode = 3;
-String[] modes = {"cartesian", "polar", "random", "noise"};
+// 4: circular
+int mode = 4;
+String[] modes = {"cartesian", "polar", "random", "noise", "circular"};
 
 // Input image
 PImage input;
@@ -52,21 +53,25 @@ void setup() {
 
   // Create an empty image with the same size an input image
   output = createImage(input.width, input.height, RGB);
-  
+
   f = loadFont("SourceCodePro-Light-8.vlw");
   textFont(f);
+
+  // If mode is Circular, make the sketch running on a square windows
+  // So the circular shape will fit better
+  if (mode == 4) surface.setSize(800, 800);
 }
 
 void draw() {
-  
+
   background(255);
-  
+
   noStroke();
 
   sortng(); // pixel sorting
-  
+
   averageColor();  // Caltulate average color
-  
+
   drawText();  // Draw text on the render
 
   // No loop, since it is useless
@@ -115,11 +120,24 @@ void sortng() {
       output.pixels[i] = c[int(noise(rand)*(c.length)-1)];
       rand+=0.01;
     }
-  } 
+  } else if (mode == 4) {
+    beginShape(TRIANGLE_FAN);
+    vertex(width/2, height/2);
+    for (int i = 0; i < 720; i++) {
+      int index = int(map(i, 0, 720, 0, c.length));
+      float x = width/2 + cos(radians(i/2))*width*0.4;
+      float y = height/2+sin(radians(i/2))*height*0.4;
+      fill(c[index]);
+      vertex(x, y);
+    }
+    endShape();
+  }
 
   // Show output processed picture
-  imageMode(CENTER);
-  image(output, width/2, height/2, width*0.9, height*0.9);
+  if (mode != 4) {  // If the mode is not Circular, show the image, otherwise we have the shape drawed
+    imageMode(CENTER);
+    image(output, width/2, height/2, width*0.9, height*0.9);
+  }
 }
 
 // Calculate the average color of the input image
@@ -127,17 +145,17 @@ void averageColor() {
   int avgR = 0;
   int avgG = 0;
   int avgB = 0;
-  
+
   for (int i = 0; i < input.pixels.length; i++) {
     avgR += red(input.pixels[i]);
     avgG += green(input.pixels[i]);
     avgB += blue(input.pixels[i]);
   }
-  
+
   avgR /= input.pixels.length;
   avgG /= input.pixels.length;
   avgB /= input.pixels.length;
-  
+
   averageColor = color(avgR, avgG, avgB);
 }
 
@@ -146,9 +164,9 @@ void drawText() {
   textAlign(LEFT, CENTER);
   fill(100);
   text("average color: " + hex(averageColor), width*0.05, height*0.975);
-  
+
   text("mode: " + modes[mode], width*0.05, height*0.025);
-  
+
   textAlign(RIGHT, CENTER);
   text("simple total pixel sorting", width*0.95, height*0.975);
 }
