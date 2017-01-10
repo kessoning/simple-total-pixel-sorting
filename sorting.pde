@@ -42,6 +42,8 @@ PFont f;
 
 int index = 1;
 
+int thisimage = 1;
+
 void settings() {
   // Window size
   size(600, 800);
@@ -49,7 +51,7 @@ void settings() {
 
 void setup() {
   // Input image
-  input = loadImage("input1.jpg");
+  input = loadImage("input" + thisimage + ".jpg");
 
   // Create an empty image with the same size an input image
   output = createImage(input.width, input.height, RGB);
@@ -74,8 +76,12 @@ void draw() {
 
   drawText();  // Draw text on the render
 
+  saveFrame("./lol/processed_circular_" + thisimage + ".jpg");
+  thisimage++;
+  setup();
+
   // No loop, since it is useless
-  noLoop();
+  //noLoop();
 }
 
 void sortng() {
@@ -123,11 +129,14 @@ void sortng() {
   } else if (mode == 4) {
     beginShape(TRIANGLE_FAN);
     vertex(width/2, height/2);
-    for (int i = 0; i < 720; i++) {
-      int index = int(map(i, 0, 720, 0, c.length));
-      float x = width/2 + cos(radians(i/2))*width*0.4;
-      float y = height/2+sin(radians(i/2))*height*0.4;
-      fill(c[index]);
+    for (int i = 0; i <= 360; i++) {
+      int index = int(map(i, 0, 360, 0, c.length));
+      //int ind = abs(int(cos(map(index, 0, c.length, 0, PI)*c.length-1)));
+      int ind = int(sin(map(index, 0, c.length, 0, PI))*(c.length-1));
+      println(ind);
+      float x = width/2 + cos(radians(i))*width*0.4;
+      float y = height/2+sin(radians(i))*height*0.4;
+      fill(c[ind]);
       vertex(x, y);
     }
     endShape();
