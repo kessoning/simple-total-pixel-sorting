@@ -77,7 +77,7 @@ void draw() {
   drawText();  // Draw text on the render
 
   // No loop, since it is useless
-  //noLoop();
+  noLoop();
 }
 
 void sortng() {
